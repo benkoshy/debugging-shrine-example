@@ -18,6 +18,10 @@ Shrine.plugin :activerecord
 
 class MyUploader < Shrine
   # plugins and uploading logic
+
+  def generate_location(io, context = {})
+    "my/custom/folder/#{super}"
+  end
 end
 
 ActiveRecord::Base.establish_connection(adapter: "sqlite3", database: ":memory:")
@@ -35,5 +39,7 @@ class PostTest < Minitest::Test
     assert_raises do
       post = Post.create(image: Down.download("https://example.com/image-from-internet.jpg"))
     end
+
+    assert Post.create(image: File.open("./files/image.jpg"))
   end
 end
