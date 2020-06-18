@@ -39,7 +39,9 @@ class PostTest < Minitest::Test
     assert_raises do
       post = Post.create(image: Down.download("https://example.com/image-from-internet.jpg"))
     end
+  end
 
-    assert Post.create(image: File.open("./files/image.jpg"))
+  def test_url
+    assert Post.create(image: File.open("./files/image.jpg")).image.url
   end
 end
