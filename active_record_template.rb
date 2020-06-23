@@ -18,10 +18,6 @@ Shrine.plugin :activerecord
 
 class MyUploader < Shrine
   # plugins and uploading logic
-
-  def generate_location(io, context = {})
-    "my/custom/folder/#{super}"
-  end
 end
 
 ActiveRecord::Base.establish_connection(adapter: "sqlite3", database: ":memory:")
@@ -30,7 +26,6 @@ ActiveRecord::Base.connection.create_table(:posts) { |t| t.text :image_data }
 class Post < ActiveRecord::Base
   include MyUploader::Attachment(:image)
 end
-
 
 ## If you like working with minitest:
 
