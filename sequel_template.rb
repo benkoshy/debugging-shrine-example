@@ -38,4 +38,8 @@ class PostTest < Minitest::Test
       post = Post.create(image: Down.download("https://example.com/image-from-internet.jpg"))
     end
   end
+
+  def test_url
+    assert Post.create(image: File.open("./files/image.jpg")).image.url
+  end
 end
