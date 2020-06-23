@@ -13,6 +13,7 @@ We've used minitest - but you can easily substitute it for your own.
 ### 3. Run the test
 
 * `bundle exec ruby active_record_template.rb`
+* `bundle exec ruby sequel_record_template.rb`
 
 ### 4. Debugging Shrine Locally
 
