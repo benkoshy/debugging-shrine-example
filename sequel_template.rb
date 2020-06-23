@@ -6,6 +6,9 @@ require "down"
 require "bundler/setup" # if you want to debug shrine locally
 require 'minitest/autorun' # if you wanna use minitest
 
+# require 'byebug'  ## if you're using byebug
+# byebug
+
 
 Shrine.storages = {
   cache: Shrine::Storage::Memory.new,
