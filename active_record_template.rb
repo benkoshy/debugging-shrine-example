@@ -11,6 +11,10 @@ require 'minitest/autorun' # if you wanna use minitest
 require "sidekiq"
 require "sidekiq/testing"
 require "./sidekiq_minitest_support"
+require "./conversation_pdf_worker"
+require "byebug"
+require "./promote_job"
+require "./destroy_job"
 
 # require 'byebug'  ## if you're using byebug
 # byebug
@@ -21,31 +25,39 @@ Shrine.storages = {
 }
 
 Shrine.plugin :activerecord
+Shrine.plugin :backgrounding
+
+Shrine::Attacher.promote_block do
+  PromoteJob.perform_async(self.class.name, record.class.name, record.id, name, file_data)
+end
+
+Shrine::Attacher.destroy_block do
+  DestroyJob.perform_async(self.class.name, data)
+end
 
 class MyUploader < Shrine
   # plugins and uploading logic
 end
 
 ActiveRecord::Base.establish_connection(adapter: "sqlite3", database: ":memory:")
-ActiveRecord::Base.connection.create_table(:posts) { |t| t.text :image_data }
+ActiveRecord::Base.connection.create_table(:conversations) do |t|
+  t.text :pdf_data
+  t.text :subject
+end
 
-class Post < ActiveRecord::Base
-  include MyUploader::Attachment(:image)
+class Conversation < ActiveRecord::Base
+  include MyUploader::Attachment(:pdf)
 end
 
 
 ## If you like working with minitest:
 
-class PostTest < Minitest::Test
-  def test_it_downloads
-    assert_raises do
-      post = Post.create(image: Down.download("https://example.com/image-from-internet.jpg"))
-    end
-  end
-
+class ConversationTest < Minitest::Test
   def test_url
     Sidekiq::Testing.inline! do
-      assert Post.create(image: File.open("./files/image.jpg")).image.url
+      c = Conversation.create(pdf: File.open("./files/image.jpg"), subject: "test")
+      assert ConversationPdfWorker.perform_async(c.id)
+      assert_equal Conversation.first.pdf.original_filename, "test.pdf"
     end
   end
 end

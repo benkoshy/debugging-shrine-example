@@ -529,10 +529,39 @@
 			}
 		},
 		{
+			"contents": "require \"active_record\"\nrequire \"shrine\"\n# if you wanna debug shrine locally then do this:\n#   gem \"shrine\", path: \"/path/to/your/local/shrine/gem/code\"\n\nrequire \"shrine/storage/memory\"\nrequire \"down\"\n\nrequire \"bundler/setup\" # if you want to debug shrine locally\nrequire 'minitest/autorun' # if you wanna use minitest\nrequire \"sidekiq\"\nrequire \"sidekiq/testing\"\nrequire \"./sidekiq_minitest_support\"\nrequire \"./conversation_pdf_worker\"\nrequire \"byebug\"\n\n# require 'byebug'  ## if you're using byebug\n# byebug\n\nShrine.storages = {\n  cache: Shrine::Storage::Memory.new,\n  store: Shrine::Storage::Memory.new,\n}\n\nShrine.plugin :activerecord\n\n\nclass MyUploader < Shrine\n  # plugins and uploading logic\nend\n\nActiveRecord::Base.establish_connection(adapter: \"sqlite3\", database: \":memory:\")\nActiveRecord::Base.connection.create_table(:conversations) do |t|\n  t.text :pdf_data\n  t.text :subject\nend\n\nclass Conversation < ActiveRecord::Base\n  include MyUploader::Attachment(:pdf)\nend\n\n\n## If you like working with minitest:\n\nclass ConversationTest < Minitest::Test\n  def test_url\n    Sidekiq::Testing.inline! do\n      c = Conversation.create(pdf: File.open(\"./files/image.jpg\"), subject: \"test\")\n      assert_equal c.id, 1\n      assert ConversationPdfWorker.perform_async(c.id)\n    end\n  end\nend\n",
 			"file": "active_record_template.rb",
+			"file_size": 1286,
+			"file_write_time": 132400339998727212,
 			"settings":
 			{
-				"buffer_size": 1250,
+				"buffer_size": 1287,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "conversation_pdf_worker.rb",
+			"settings":
+			{
+				"buffer_size": 542,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Readme.md",
+			"settings":
+			{
+				"buffer_size": 734,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "sidekiq_minitest_support.rb",
+			"settings":
+			{
+				"buffer_size": 101,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -658,7 +687,8 @@
 	},
 	"expanded_folders":
 	[
-		"/home/koshy/Documents/www/OpenSourceProjects/debug-shrine/debugging-shrine-example"
+		"/home/koshy/Documents/www/OpenSourceProjects/debug-shrine/debugging-shrine-example",
+		"/home/koshy/Documents/www/OpenSourceProjects/debug-shrine/debugging-shrine-example/files"
 	],
 	"file_history":
 	[
@@ -814,9 +844,15 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": false,
+		"case_sensitive": true,
 		"find_history":
 		[
+			"posts",
+			"Post",
+			"post",
+			"Post",
+			"image_data",
+			"image",
 			"subject",
 			"isSubjectValid",
 			"debugger",
@@ -938,12 +974,6 @@
 			"have i",
 			"investigate",
 			"document",
-			"CurrentDocument",
-			"currentDocument",
-			"CurrentDocument",
-			"currentDocument",
-			"CurrentDocument",
-			"currentDocument",
 			"CurrentDocument"
 		],
 		"highlight": false,
@@ -1083,7 +1113,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -1092,15 +1122,357 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1250,
+						"buffer_size": 1287,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								442,
-								442
+								637,
+								637
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										697,
+										700
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/dot.png",
+										"region.yellowish brackethighlighter.default"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										639,
+										644
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content"
+							],
+							"keep_blank_lines": null,
+							"syntax": "Packages/Ruby/Ruby.sublime-syntax",
+							"tab_size": null,
+							"translate_tabs_to_spaces": null
+						},
+						"translation.x": 0.0,
+						"translation.y": 171.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "conversation_pdf_worker.rb",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 542,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								531,
+								531
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										534,
+										537
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/dot.png",
+										"region.yellowish brackethighlighter.default"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										102,
+										105
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content"
+							],
+							"keep_blank_lines": null,
+							"syntax": "Packages/Ruby/Ruby.sublime-syntax",
+							"tab_size": null,
+							"translate_tabs_to_spaces": null
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "Readme.md",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 734,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content"
+							],
+							"syntax": "Packages/MarkdownEditing/Markdown.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "sidekiq_minitest_support.rb",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 101,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								101,
+								101
 							]
 						],
 						"settings":
@@ -1181,14 +1553,14 @@
 							],
 							"keep_blank_lines": null,
 							"syntax": "Packages/Ruby/Ruby.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
+							"tab_size": null,
+							"translate_tabs_to_spaces": null
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 4,
 					"type": "text"
 				}
 			]
