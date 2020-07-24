@@ -7,4 +7,5 @@ source 'https://rubygems.org' do
   gem 'sqlite3'
   gem "byebug"
   gem "minitest", "~> 5.1"
+  gem "sidekiq"
 end

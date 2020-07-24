@@ -8,6 +8,9 @@ require "down"
 
 require "bundler/setup" # if you want to debug shrine locally
 require 'minitest/autorun' # if you wanna use minitest
+require "sidekiq"
+require "sidekiq/testing"
+require "./sidekiq_minitest_support"
 
 # require 'byebug'  ## if you're using byebug
 # byebug
@@ -41,6 +44,8 @@ class PostTest < Minitest::Test
   end
 
   def test_url
-    assert Post.create(image: File.open("./files/image.jpg")).image.url
+    Sidekiq::Testing.inline! do
+      assert Post.create(image: File.open("./files/image.jpg")).image.url
+    end
   end
 end
