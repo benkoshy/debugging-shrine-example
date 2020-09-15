@@ -27,16 +27,16 @@ Shrine.storages = {
 Shrine.plugin :activerecord
 Shrine.plugin :backgrounding
 
-Shrine::Attacher.promote_block do
-  PromoteJob.perform_async(self.class.name, record.class.name, record.id, name, file_data)
-end
-
-Shrine::Attacher.destroy_block do
-  DestroyJob.perform_async(self.class.name, data)
-end
-
 class MyUploader < Shrine
   # plugins and uploading logic
+
+  Attacher.promote_block do
+    PromoteJob.perform_async(self.class.name, record.class.name, record.id, name, file_data)
+  end
+
+  Attacher.destroy_block do
+    DestroyJob.perform_async(self.class.name, data)
+  end
 end
 
 ActiveRecord::Base.establish_connection(adapter: "sqlite3", database: ":memory:")
@@ -56,8 +56,7 @@ class ConversationTest < Minitest::Test
   def test_url
     Sidekiq::Testing.inline! do
       c = Conversation.create(pdf: File.open("./files/image.jpg"), subject: "test")
-      assert ConversationPdfWorker.perform_async(c.id)
-      assert_equal Conversation.first.pdf.original_filename, "test.pdf"
+      c.destroy
     end
   end
 end
