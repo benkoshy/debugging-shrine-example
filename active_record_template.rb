@@ -9,6 +9,12 @@ require "down"
 require "bundler/setup" # if you want to debug shrine locally
 require 'minitest/autorun' # if you wanna use minitest
 
+require "factory_bot"
+
+require "byebug"
+# require "test/factories/private_attachment"
+
+
 # require 'byebug'  ## if you're using byebug
 # byebug
 
@@ -28,19 +34,25 @@ ActiveRecord::Base.connection.create_table(:posts) { |t| t.text :image_data }
 
 class Post < ActiveRecord::Base
   include MyUploader::Attachment(:image)
+
+  def filename
+    image.metadata["filename"]
+  end
 end
 
 
 ## If you like working with minitest:
-
 class PostTest < Minitest::Test
-  def test_it_downloads
-    assert_raises do
-      post = Post.create(image: Down.download("https://example.com/image-from-internet.jpg"))
-    end
+  include FactoryBot::Syntax::Methods
+
+  def test_file_name_without_factory_bot
+    image_data = %!{"id":"***.jpg","storage":"store","metadata":{"filename":"konnichiwa.jpeg","size":976220,"mime_type":"image/jpeg","width":4032,"height":3024}}!
+    post = Post.new
+    post.image_data = image_data
+    post.save
+    assert_equal "konnichiwa.jpeg", Post.last.filename
   end
 
-  def test_url
-    assert Post.create(image: File.open("./files/image.jpg")).image.url
+  def test_filename_with_factory_bot
   end
 end
