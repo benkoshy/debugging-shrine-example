@@ -10,7 +10,6 @@ require "bundler/setup" # if you want to debug shrine locally
 require 'minitest/autorun' # if you wanna use minitest
 
 require "factory_bot"
-
 require "byebug"
 # require "test/factories/private_attachment"
 
@@ -44,6 +43,7 @@ end
 ## If you like working with minitest:
 class PostTest < Minitest::Test
   include FactoryBot::Syntax::Methods
+  FactoryBot.find_definitions
 
   def test_file_name_without_factory_bot
     image_data = %!{"id":"***.jpg","storage":"store","metadata":{"filename":"konnichiwa.jpeg","size":976220,"mime_type":"image/jpeg","width":4032,"height":3024}}!
@@ -54,5 +54,9 @@ class PostTest < Minitest::Test
   end
 
   def test_filename_with_factory_bot
+    image_data = %!{"id":"***.jpg","storage":"store","metadata":{"filename":"konnichiwa.jpeg","size":976220,"mime_type":"image/jpeg","width":4032,"height":3024}}!
+    post = build(:post, image_data: image_data)
+    post.save
+    assert_equal "konnichiwa.jpeg", Post.last.filename
   end
 end
