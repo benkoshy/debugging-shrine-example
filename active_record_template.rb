@@ -19,28 +19,40 @@ Shrine.storages = {
 
 Shrine.plugin :activerecord
 
-class MyUploader < Shrine
+class ImageUploader < Shrine
   # plugins and uploading logic
 end
 
-ActiveRecord::Base.establish_connection(adapter: "sqlite3", database: ":memory:")
-ActiveRecord::Base.connection.create_table(:posts) { |t| t.text :image_data }
+class TopicIconUploader < ImageUploader
+  # Again, since this code is sensitive, this is as much as I can give you. Apologies.
 
-class Post < ActiveRecord::Base
-  include MyUploader::Attachment(:image)
+  plugin :default_url
+
+  Attacher.default_url do |**_options|
+    '/images/icons/topic.png'
+  end
+end
+
+ActiveRecord::Base.establish_connection(adapter: "sqlite3", database: ":memory:")
+ActiveRecord::Base.connection.create_table(:topics) { |t| t.text :icon_data }
+
+class Topic < ActiveRecord::Base
+  include TopicIconUploader::Attachment(:icon)
 end
 
 
 ## If you like working with minitest:
 
-class PostTest < Minitest::Test
+class TopicTest < Minitest::Test
   def test_it_downloads
     assert_raises do
-      post = Post.create(image: Down.download("https://example.com/image-from-internet.jpg"))
+      topic = Topic.create(icon: Down.download("https://example.com/image-from-internet.jpg"))
     end
   end
 
   def test_url
-    assert Post.create(image: File.open("./files/image.jpg")).image.url
+    topic = Topic.create(icon: File.open("./files/image.jpg"))
+    assert topic.icon.url
+    assert topic.icon_url
   end
 end

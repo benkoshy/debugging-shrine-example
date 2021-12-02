@@ -1,10 +1,3 @@
-PATH
-  remote: ../shrine
-  specs:
-    shrine (3.2.1)
-      content_disposition (~> 1.0)
-      down (~> 5.1)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -38,6 +31,9 @@ GEM
     ruby-vips (2.0.17)
       ffi (~> 1.9)
     sequel (5.33.0)
+    shrine (3.4.0)
+      content_disposition (~> 1.0)
+      down (~> 5.1)
     sqlite3 (1.4.2)
     thread_safe (0.3.6)
     tzinfo (1.2.7)
@@ -54,7 +50,7 @@ DEPENDENCIES
   image_processing!
   minitest (~> 5.1)!
   sequel!
-  shrine!
+  shrine (~> 3.4.0)!
   sqlite3!
 
 BUNDLED WITH
